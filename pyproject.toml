@@ -1,0 +1,29 @@
+[project]
+name = "find-similar-photo"
+version = "0.1.0"
+description = "CLIP-based image similarity search with Streamlit UI"
+requires-python = ">=3.10"
+dependencies = [
+    "streamlit>=1.28.0",
+    "torch>=2.4.0",
+    "torchvision>=0.19.0",
+    "clip",
+    "Pillow>=10.4.0",
+    "numpy>=2.0.1",
+    "chromadb>=0.4.0",
+    "tqdm>=4.66.4",
+    "packaging>=24.1",
+]
+
+[tool.uv.sources]
+clip = {git = "https://github.com/openai/CLIP.git"}
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["app", "clip_vector_db", "path_utils"]
+
+[tool.uv]
+dev-dependencies = []
