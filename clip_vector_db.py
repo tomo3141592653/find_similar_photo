@@ -98,7 +98,7 @@ class CLIPVectorDB:
     
     def build_database(self, folder_path: str, image_extensions: List[str] = None, progress_callback=None):
         if image_extensions is None:
-            image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']
+            image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.heic']
         
         image_files = []
         for root, dirs, files in os.walk(folder_path):

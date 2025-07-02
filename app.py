@@ -5,6 +5,10 @@ from PIL import Image
 import tempfile
 from clip_vector_db import CLIPVectorDB
 from path_utils import normalize_path, validate_path_exists
+import pillow_heif
+
+# HEICをPILで開けるように登録
+pillow_heif.register_heif_opener()
 
 st.set_page_config(
     page_title="画像類似検索",
@@ -29,7 +33,7 @@ def main():
         
         uploaded_file = st.file_uploader(
             "検索したい画像をアップロードしてください",
-            type=['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'webp']
+            type=['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'webp', 'heic']
         )
         
         col1, col2 = st.columns([1, 2])
