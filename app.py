@@ -4,7 +4,7 @@ from pathlib import Path
 from PIL import Image
 import tempfile
 from clip_vector_db import CLIPVectorDB
-from path_utils import normalize_path, validate_path_exists
+from path_utils import normalize_path, validate_path_exists, convert_wsl_path_to_windows
 import pillow_heif
 
 # HEICをPILで開けるように登録
@@ -39,7 +39,7 @@ def main():
         col1, col2 = st.columns([1, 2])
         
         with col1:
-            top_k = st.slider("表示する類似画像数", min_value=1, max_value=100, value=10)
+            top_k = st.slider("表示する類似画像数", min_value=1, max_value=500, value=10)
         
         if uploaded_file is not None:
             with tempfile.NamedTemporaryFile(delete=False, suffix=f".{uploaded_file.name.split('.')[-1]}") as tmp_file:
@@ -65,7 +65,7 @@ def main():
                         if os.path.exists(image_path):
                             try:
                                 st.markdown(f"**{i+1}. 類似度: {similarity:.4f}**")
-                                st.markdown(f"ファイル: `{image_path}`")
+                                st.markdown(f"ファイル: `{convert_wsl_path_to_windows(image_path)}`")
                                 
                                 similar_image = Image.open(image_path)
                                 st.image(similar_image, caption=f"類似度: {similarity:.4f}", width=300)
@@ -91,7 +91,7 @@ def main():
         col1, col2 = st.columns([1, 2])
         
         with col1:
-            top_k = st.slider("表示する画像数", min_value=1, max_value=100, value=10, key="text_search_top_k")
+            top_k = st.slider("表示する画像数", min_value=1, max_value=500, value=10, key="text_search_top_k")
         
         if query_text:
             st.subheader(f"「{query_text}」の検索結果")
@@ -113,7 +113,7 @@ def main():
                                 image = Image.open(image_path)
                                 st.image(image, caption=f"類似度: {similarity:.4f}", use_container_width=True)
                                 st.markdown(f"**ファイル:** `{os.path.basename(image_path)}`")
-                                st.markdown(f"**パス:** `{image_path}`")
+                                st.markdown(f"**パス:** `{convert_wsl_path_to_windows(image_path)}`")
                                 st.markdown("---")
                             except Exception as e:
                                 st.error(f"画像を読み込めませんでした: {os.path.basename(image_path)}")
@@ -141,7 +141,7 @@ def main():
                 
                 # 変換されたパスを表示
                 if folder_path != folder_path_input:
-                    st.info(f"パスを変換しました: `{folder_path}`")
+                    st.info(f"パスを変換しました: `{convert_wsl_path_to_windows(folder_path)}`")
                 
                 if validate_path_exists(folder_path):
                     st.success("✅ フォルダが見つかりました")
@@ -154,7 +154,7 @@ def main():
                         def update_progress(progress, current, total, filename):
                             progress_bar.progress(progress)
                             status_text.text(f"処理中: {current}/{total} 枚")
-                            current_file.text(f"現在の画像: {filename}")
+                            current_file.text(f"現在の画像: {convert_wsl_path_to_windows(filename)}")
                         
                         try:
                             db.build_database(folder_path, progress_callback=update_progress)

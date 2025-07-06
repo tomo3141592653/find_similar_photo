@@ -40,6 +40,44 @@ def convert_windows_path_to_wsl(windows_path: str) -> str:
     # その他の場合はそのまま返す
     return windows_path
 
+def convert_wsl_path_to_windows(wsl_path: str) -> str:
+    r"""
+    WSL形式のパスをWindows形式のパスに変換する
+    
+    Examples:
+        /mnt/c/Users/user/Pictures -> C:\Users\user\Pictures
+        /mnt/d/Photos/image.jpg -> D:\Photos\image.jpg
+        \\server\share\folder -> \\server\share\folder (UNCパスはそのまま)
+    """
+    if not wsl_path:
+        return wsl_path
+    
+    # UNCパスの場合はそのまま返す
+    if wsl_path.startswith('\\\\'):
+        return wsl_path
+    
+    # Windows形式のパスの場合はそのまま返す
+    if re.match(r'^[A-Za-z]:[\\\/]', wsl_path):
+        return wsl_path.replace('/', '\\')
+    
+    # WSL形式のパス（/mnt/c/...）を変換
+    if wsl_path.startswith('/mnt/'):
+        # ドライブレターを取得
+        drive_letter = wsl_path[5].upper()
+        # パスの残りの部分を取得
+        path_remainder = wsl_path[7:]  # /mnt/c/ の部分を除く
+        
+        # スラッシュをバックスラッシュに変換
+        path_remainder = path_remainder.replace('/', '\\')
+        
+        # Windows形式のパスを構築
+        windows_path = f"{drive_letter}:\\{path_remainder}"
+        
+        return windows_path
+    
+    # その他の場合はそのまま返す
+    return wsl_path
+
 def normalize_path(path: str) -> str:
     """
     パスを正規化する（Windows -> WSL変換 + パスの正規化）
